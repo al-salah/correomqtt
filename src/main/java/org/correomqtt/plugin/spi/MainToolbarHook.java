@@ -4,6 +4,8 @@ import javafx.scene.layout.HBox;
 
 public interface MainToolbarHook extends BaseExtensionPoint {
 
-    void onInstantiateMainToolbar(String connectionId, HBox controllViewButtonHBox, int indexToInsert);
+    void onInstantiateMainToolbar(String connectionId, HBox pluginWidgetArea);
+
+
 
 }
