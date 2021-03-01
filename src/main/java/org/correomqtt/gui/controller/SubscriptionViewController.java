@@ -38,6 +38,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
+import org.correomqtt.plugin.manager.PluginManager;
+import org.correomqtt.plugin.spi.TopicsListHook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,6 +60,7 @@ public class SubscriptionViewController extends BaseMessageBasedViewController i
     private static final Logger LOGGER = LoggerFactory.getLogger(SubscriptionViewController.class);
     private static ResourceBundle resources;
     private final SubscriptionViewDelegate delegate;
+    private final PluginManager pluginSystem = PluginManager.getInstance();
 
     @FXML
     public AnchorPane subscribeBodyViewAnchor;
@@ -84,9 +87,12 @@ public class SubscriptionViewController extends BaseMessageBasedViewController i
     private Button selectNoneButton;
     private boolean afterSubscribe;
 
+    private static SubscriptionViewController instance;
+
     public SubscriptionViewController(String connectionId, SubscriptionViewDelegate delegate) {
         super(connectionId);
         this.delegate = delegate;
+        instance=this;
         SubscribeDispatcher.getInstance().addObserver(this);
         UnsubscribeDispatcher.getInstance().addObserver(this);
         ConnectionLifecycleDispatcher.getInstance().addObserver(this);
@@ -99,6 +105,9 @@ public class SubscriptionViewController extends BaseMessageBasedViewController i
                 () -> new SubscriptionViewController(connectionId, delegate));
         resources = result.getResourceBundle();
         return result;
+    }
+    public static SubscriptionViewController getInstance() {
+        return instance;
     }
 
     @FXML
@@ -475,6 +484,15 @@ public class SubscriptionViewController extends BaseMessageBasedViewController i
     @Override
     public void setTabDirty() {
         delegate.setTabDirty();
+    }
+
+    public void OnNewTopics() {
+
+        pluginSystem.getExtensions(TopicsListHook.class).forEach(p -> {
+            subscribeTopicComboBox.getItems().addAll(  p.getTopics().keySet());
+        });
+
+
     }
 }
 

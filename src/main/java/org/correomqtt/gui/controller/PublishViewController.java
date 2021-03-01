@@ -1,5 +1,6 @@
 package org.correomqtt.gui.controller;
 
+import com.arkea.asyncapi.v2.models.channels.Channel;
 import org.correomqtt.business.exception.CorreoMqttException;
 import org.correomqtt.business.model.MessageDTO;
 import org.correomqtt.business.model.MessageType;
@@ -16,6 +17,7 @@ import org.correomqtt.gui.model.MessagePropertiesDTO;
 import org.correomqtt.gui.transformer.MessageTransformer;
 import org.correomqtt.plugin.manager.PluginManager;
 import org.correomqtt.plugin.model.MessageExtensionDTO;
+import org.correomqtt.plugin.spi.MainToolbarHook;
 import org.correomqtt.plugin.spi.MessageContextMenuHook;
 import org.correomqtt.plugin.spi.PublishMenuHook;
 import javafx.application.Platform;
@@ -33,6 +35,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.correomqtt.business.dispatcher.*;
+import org.correomqtt.plugin.spi.TopicsListHook;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
 import org.slf4j.Logger;
@@ -71,6 +74,9 @@ public class PublishViewController extends BaseMessageBasedViewController implem
     public HBox pluginControlBox;
 
     @FXML
+    public HBox APIpluginControlBox;
+
+    @FXML
     public CheckBox retainedCheckBox;
 
     @FXML
@@ -84,9 +90,13 @@ public class PublishViewController extends BaseMessageBasedViewController implem
 
     private LoadingViewController loadingViewController;
 
+
+    private static PublishViewController instance;
+
     public PublishViewController(String connectionId, PublishViewDelegate delegate) {
         super(connectionId);
         this.delegate = delegate;
+           instance=this;
         ConnectionLifecycleDispatcher.getInstance().addObserver(this);
         PublishDispatcher.getInstance().addObserver(this);
         ConfigDispatcher.getInstance().addObserver(this);
@@ -94,6 +104,10 @@ public class PublishViewController extends BaseMessageBasedViewController implem
         ImportMessageDispatcher.getInstance().addObserver(this);
         PersistPublishHistoryDispatcher.getInstance().addObserver(this);
     }
+    public static PublishViewController getInstance() {
+        return instance;
+    }
+
 
     static LoaderResult<PublishViewController> load(String connectionId, PublishViewDelegate delegate) {
         LoaderResult<PublishViewController> result = load(PublishViewController.class, "publishView.fxml",
@@ -115,6 +129,15 @@ public class PublishViewController extends BaseMessageBasedViewController implem
             pluginBox.setAlignment(Pos.CENTER_RIGHT);
             pluginControlBox.getChildren().add(pluginBox);
             p.onInstantiatePublishMenu(getConnectionId(), pluginBox);
+        });
+
+
+        pluginSystem.getExtensions(TopicsListHook.class).forEach(p -> {
+            HBox pluginBox = new HBox();
+            pluginBox.setAlignment(Pos.CENTER_RIGHT);
+            APIpluginControlBox.getChildren().add(pluginBox);
+            p.onInstantiatePublishView(getConnectionId(), pluginBox);
+            APIpluginControlBox.setVisible(false);
         });
 
         topicComboBox.getEditor().lengthProperty().addListener(((observable, oldValue, newValue) -> CheckTopicHelper.checkPublishTopic(topicComboBox, false)));
@@ -463,4 +486,27 @@ public class PublishViewController extends BaseMessageBasedViewController implem
     public void updatedPublishes(String connectionId) {
         initTopicComboBox();
     }
+
+
+    public void OnNewTopics() {
+
+        pluginSystem.getExtensions(TopicsListHook.class).forEach(p -> {
+            topicComboBox.getItems().addAll(p.getTopics().keySet());
+
+        topicComboBox.setOnAction(e->{
+            Channel channel= p.getTopics().get(topicComboBox.getSelectionModel().getSelectedItem());
+            if(channel!=null &&channel.getPublish()!=null&&channel.getPublish().getMessage().getPayload()!=null) {
+                payloadCodeArea.replaceText(channel.getPublish().getMessage().getPayload().toString());
+                APIpluginControlBox.setVisible(true);
+            }
+            else{
+                payloadCodeArea.replaceText("");
+                APIpluginControlBox.setVisible(false);
+            }
+        });
+        });
+
+
+    }
+
 }
