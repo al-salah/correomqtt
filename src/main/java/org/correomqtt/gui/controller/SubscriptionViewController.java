@@ -486,13 +486,5 @@ public class SubscriptionViewController extends BaseMessageBasedViewController i
         delegate.setTabDirty();
     }
 
-    public void OnNewTopics() {
-
-        pluginSystem.getExtensions(TopicsListHook.class).forEach(p -> {
-            subscribeTopicComboBox.getItems().addAll(  p.getTopics().keySet());
-        });
-
-
-    }
 }
 

@@ -1,6 +1,21 @@
 package org.correomqtt.gui.controller;
 
-import com.arkea.asyncapi.v2.models.channels.Channel;
+import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.geometry.Pos;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.util.Callback;
+import org.correomqtt.business.dispatcher.*;
 import org.correomqtt.business.exception.CorreoMqttException;
 import org.correomqtt.business.model.MessageDTO;
 import org.correomqtt.business.model.MessageType;
@@ -14,27 +29,12 @@ import org.correomqtt.gui.cell.TopicCell;
 import org.correomqtt.gui.helper.AlertHelper;
 import org.correomqtt.gui.helper.CheckTopicHelper;
 import org.correomqtt.gui.model.MessagePropertiesDTO;
+import org.correomqtt.gui.model.TopicDTO;
 import org.correomqtt.gui.transformer.MessageTransformer;
 import org.correomqtt.plugin.manager.PluginManager;
 import org.correomqtt.plugin.model.MessageExtensionDTO;
-import org.correomqtt.plugin.spi.MainToolbarHook;
 import org.correomqtt.plugin.spi.MessageContextMenuHook;
 import org.correomqtt.plugin.spi.PublishMenuHook;
-import javafx.application.Platform;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.geometry.Pos;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-import org.correomqtt.business.dispatcher.*;
 import org.correomqtt.plugin.spi.TopicsListHook;
 import org.fxmisc.flowless.VirtualizedScrollPane;
 import org.fxmisc.richtext.CodeArea;
@@ -74,7 +74,7 @@ public class PublishViewController extends BaseMessageBasedViewController implem
     public HBox pluginControlBox;
 
     @FXML
-    public HBox APIpluginControlBox;
+    public HBox AsyncAPIpluginControlBox;
 
     @FXML
     public CheckBox retainedCheckBox;
@@ -83,7 +83,7 @@ public class PublishViewController extends BaseMessageBasedViewController implem
     public Button publishButton;
 
     @FXML
-    private CodeArea payloadCodeArea;
+    public CodeArea payloadCodeArea;
 
     @FXML
     private Pane codeAreaScrollPane;
@@ -96,7 +96,7 @@ public class PublishViewController extends BaseMessageBasedViewController implem
     public PublishViewController(String connectionId, PublishViewDelegate delegate) {
         super(connectionId);
         this.delegate = delegate;
-           instance=this;
+        instance = this;
         ConnectionLifecycleDispatcher.getInstance().addObserver(this);
         PublishDispatcher.getInstance().addObserver(this);
         ConfigDispatcher.getInstance().addObserver(this);
@@ -104,6 +104,7 @@ public class PublishViewController extends BaseMessageBasedViewController implem
         ImportMessageDispatcher.getInstance().addObserver(this);
         PersistPublishHistoryDispatcher.getInstance().addObserver(this);
     }
+
     public static PublishViewController getInstance() {
         return instance;
     }
@@ -128,20 +129,15 @@ public class PublishViewController extends BaseMessageBasedViewController implem
             HBox pluginBox = new HBox();
             pluginBox.setAlignment(Pos.CENTER_RIGHT);
             pluginControlBox.getChildren().add(pluginBox);
-            p.onInstantiatePublishMenu(getConnectionId(), pluginBox);
+            p.onInstantiatePublishMenu(getConnectionId(), pluginControlBox);
         });
 
-
         pluginSystem.getExtensions(TopicsListHook.class).forEach(p -> {
-            HBox pluginBox = new HBox();
-            pluginBox.setAlignment(Pos.CENTER_RIGHT);
-            APIpluginControlBox.getChildren().add(pluginBox);
-            p.onInstantiatePublishView(getConnectionId(), pluginBox);
-            APIpluginControlBox.setVisible(false);
+            AsyncAPIpluginControlBox = new HBox();
+            p.onInstantiatePublishView(getConnectionId(), AsyncAPIpluginControlBox);
         });
 
         topicComboBox.getEditor().lengthProperty().addListener(((observable, oldValue, newValue) -> CheckTopicHelper.checkPublishTopic(topicComboBox, false)));
-
         codeAreaScrollPane.getChildren().add(new VirtualizedScrollPane<>(payloadCodeArea));
         payloadCodeArea.prefWidthProperty().bind(codeAreaScrollPane.widthProperty());
         payloadCodeArea.prefHeightProperty().bind(codeAreaScrollPane.heightProperty());
@@ -151,7 +147,9 @@ public class PublishViewController extends BaseMessageBasedViewController implem
 
     private void initTopicComboBox() {
         List<String> topics = PersistPublishHistoryProvider.getInstance(getConnectionId()).getTopics(getConnectionId());
-        topicComboBox.setItems(FXCollections.observableArrayList(topics));
+
+            topicComboBox.setItems(FXCollections.observableArrayList(topics));
+
         topicComboBox.setCellFactory(TopicCell::new);
     }
 
@@ -487,26 +485,5 @@ public class PublishViewController extends BaseMessageBasedViewController implem
         initTopicComboBox();
     }
 
-
-    public void OnNewTopics() {
-
-        pluginSystem.getExtensions(TopicsListHook.class).forEach(p -> {
-            topicComboBox.getItems().addAll(p.getTopics().keySet());
-
-        topicComboBox.setOnAction(e->{
-            Channel channel= p.getTopics().get(topicComboBox.getSelectionModel().getSelectedItem());
-            if(channel!=null &&channel.getPublish()!=null&&channel.getPublish().getMessage().getPayload()!=null) {
-                payloadCodeArea.replaceText(channel.getPublish().getMessage().getPayload().toString());
-                APIpluginControlBox.setVisible(true);
-            }
-            else{
-                payloadCodeArea.replaceText("");
-                APIpluginControlBox.setVisible(false);
-            }
-        });
-        });
-
-
-    }
 
 }
