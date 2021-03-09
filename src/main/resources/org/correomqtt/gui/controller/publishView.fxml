@@ -71,7 +71,7 @@
                     </children>
 
                 </Pane>
-                  <HBox fx:id="APIpluginControlBox" prefHeight="0.0" />
+                  <HBox fx:id="AsyncAPIpluginControlBox" prefHeight="0.0" />
             </VBox>
         </AnchorPane>
     </SplitPane>

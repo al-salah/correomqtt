@@ -133,7 +133,6 @@ public class PublishViewController extends BaseMessageBasedViewController implem
         });
 
         pluginSystem.getExtensions(TopicsListHook.class).forEach(p -> {
-            AsyncAPIpluginControlBox = new HBox();
             p.onInstantiatePublishView(getConnectionId(), AsyncAPIpluginControlBox);
         });
 
