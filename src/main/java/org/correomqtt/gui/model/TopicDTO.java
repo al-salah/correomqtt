@@ -7,9 +7,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
-public class TopicDTO {
+public class  {
 
    private String name ;
-   private String Discip;
-   private boolean IstAsyncApi;
+   private String string  ;
+
 }
