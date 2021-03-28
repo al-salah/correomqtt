@@ -7,7 +7,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.layout.Pane;
-import org.correomqtt.gui.model.TopicDTO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
