@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.Tooltip?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane fx:id="tabPaneAnchorPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/mainView.css" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.correomqtt.gui.controller.MainViewController">
+<AnchorPane fx:id="tabPaneAnchorPane" prefHeight="400.0" prefWidth="600.0" stylesheets="@../css/mainView.css" xmlns="http://javafx.com/javafx/8.0.191" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.correomqtt.gui.controller.MainViewController">
     <MenuBar fx:id="menuBar" layoutX="32.0" layoutY="2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
         <Menu fx:id="fileMenu" mnemonicParsing="false" text="%mainViewFileMenu">
             <MenuItem fx:id="closeItem" mnemonicParsing="false" text="%mainViewCloseMenuItem" />
@@ -11,6 +16,16 @@
         <Menu fx:id="toolsMenu" mnemonicParsing="false" text="%mainViewToolsMenu">
             <MenuItem fx:id="connectionsItem" mnemonicParsing="false" text="%mainViewConnectionsMenuItem" />
             <MenuItem fx:id="settingsItem" mnemonicParsing="false" text="%mainViewSettingsMenuItem" />
+         <Menu mnemonicParsing="false" text="Import...">
+           <items>
+               <MenuItem fx:id="ImportConnectionItem" mnemonicParsing="false" text="Connection Profiles" />
+           </items>
+         </Menu>
+         <Menu mnemonicParsing="false" text="Export...">
+           <items>
+               <MenuItem fx:id="ExportConnectionItem" mnemonicParsing="false" text="Connection Profiles" />
+           </items>
+         </Menu>
             <MenuItem fx:id="pluginSettingsItem" mnemonicParsing="false" text="%mainViewPluginSettingsMenuItem" />
         </Menu>
         <Menu fx:id="helpMenu" mnemonicParsing="false" text="%mainViewHelpMenu">
@@ -19,7 +34,7 @@
          <MenuItem fx:id="websiteItem" mnemonicParsing="false" text="%mainViewWebsiteMenuItem" />
         </Menu>
     </MenuBar>
-    <TabPane fx:id="tabPane" styleClass="content-holder" layoutX="7.0" layoutY="36.0" prefHeight="364.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="29.0">
+    <TabPane fx:id="tabPane" layoutX="7.0" layoutY="36.0" prefHeight="364.0" prefWidth="600.0" styleClass="content-holder" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="29.0">
         <Tab fx:id="addTab" styleClass="addConnectionTab">
             <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
             <tooltip>

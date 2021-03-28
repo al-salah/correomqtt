@@ -1,9 +1,7 @@
 package org.correomqtt.gui.controller;
 
-import org.correomqtt.business.dispatcher.ConfigDispatcher;
-import org.correomqtt.business.dispatcher.ConfigObserver;
-import org.correomqtt.business.dispatcher.ConnectionLifecycleDispatcher;
-import org.correomqtt.business.dispatcher.ConnectionLifecycleObserver;
+import lombok.Getter;
+import org.correomqtt.business.dispatcher.*;
 import org.correomqtt.business.keyring.KeyringFactory;
 import org.correomqtt.business.mqtt.CorreoMqttClient;
 import org.correomqtt.business.provider.PasswordRecoverableException;
@@ -55,6 +53,7 @@ public class ConnectionSettingsViewController extends BaseController implements 
     private final ConnectionSettingsViewDelegate delegate;
 
     @FXML
+    @Getter
     private ListView<ConnectionPropertiesDTO> connectionsListView;
     @FXML
     private TabPane connectionConfigTabPane;
@@ -155,7 +154,6 @@ public class ConnectionSettingsViewController extends BaseController implements 
     }
 
     public static void showAsDialog(ConnectionSettingsViewDelegate delegate) {
-
 
         Map<Object, Object> properties = new HashMap<>();
         properties.put(WindowProperty.WINDOW_TYPE, WindowType.CONNECTION_SETTINGS);
@@ -776,7 +774,7 @@ public class ConnectionSettingsViewController extends BaseController implements 
         }
     }
 
-    private boolean saveConnection() {
+    protected boolean saveConnection() {
 
         if (doChecks()) {
 

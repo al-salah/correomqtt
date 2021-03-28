@@ -1,5 +1,6 @@
 package org.correomqtt.gui.controller;
 
+import lombok.Getter;
 import org.correomqtt.business.dispatcher.ConfigDispatcher;
 import org.correomqtt.business.dispatcher.ConfigObserver;
 import org.correomqtt.business.utils.ConnectionHolder;
@@ -44,6 +45,7 @@ public class ConnectionOnbordingViewController extends BaseController implements
     public Label noConnectionsLabel;
     @FXML
     public VBox helloViewVBox;
+    @Getter
     @FXML
     public ListView<ConnectionPropertiesDTO> connectionListView;
     @FXML

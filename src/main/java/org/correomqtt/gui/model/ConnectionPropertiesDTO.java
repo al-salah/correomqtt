@@ -9,13 +9,14 @@ import lombok.Getter;
 import lombok.Setter;
 import org.correomqtt.business.model.*;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 @Getter
 @Setter
 @AllArgsConstructor
 @Builder
-public class ConnectionPropertiesDTO {
+public class ConnectionPropertiesDTO  {
 
     private final StringProperty idProperty;
     private final StringProperty nameProperty;

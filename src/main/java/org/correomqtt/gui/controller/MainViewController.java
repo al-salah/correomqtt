@@ -68,6 +68,10 @@ public class MainViewController implements ConnectionOnboardingDelegate, Connect
     @FXML
     private MenuItem websiteItem;
     @FXML
+    private MenuItem ImportConnectionItem;
+    @FXML
+    private MenuItem ExportConnectionItem;
+    @FXML
     private Menu pluginMenu;
     @FXML
     private MenuItem pluginSettingsItem;
@@ -129,6 +133,8 @@ public class MainViewController implements ConnectionOnboardingDelegate, Connect
         closeItem.setOnAction(event -> System.exit(0));
         connectionsItem.setOnAction(event -> ConnectionSettingsViewController.showAsDialog(this));
         settingsItem.setOnAction(event -> SettingsViewController.showAsDialog());
+        ImportConnectionItem.setOnAction(event -> ImportViewController.showAsDialog());
+        ExportConnectionItem.setOnAction(event -> ExportViewController.showAsDialog());
         aboutItem.setOnAction(event -> AboutViewController.showAsDialog());
         updateItem.setOnAction(event -> {
             try {
